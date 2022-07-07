@@ -4,24 +4,20 @@ import requests
 from bs4 import BeautifulSoup
 
 class FeedCollector(object):    
-    def __init__(self, url):
+    def __init__(self, url, feed_name):
         self.url = url
+        self.name = feed_name
     def download_raw_files(self, path):
-        os.system("wget "+self.url+" -P "+path)
+        os.system("wget "+self.url+" -P "+path+"/"+self.name)
 
 class DantorCollector(FeedCollector):    
-    def download_raw_files(self, path):
-        for url in self.url:
-            os.system("wget "+url+" -P "+path)
+    pass
 
 class DomainCollector(FeedCollector):
-    def download_raw_files(self, path):
-        os.system("wget "+self.url+" -P "+path)
+    pass
 
 class FeodoCollector(FeedCollector): 
-    def download_raw_files(self, path):
-        for url in self.url:            
-            os.system("wget "+url+" -P "+path)
+    pass
 
 class FireholCollector(FeedCollector):
     def download_rep(self, url):
@@ -37,17 +33,18 @@ class FireholCollector(FeedCollector):
         cwd = os.getcwd()
         self.download_rep(self.url)
         self.move_lists(path, cwd+"/temp")
+        print(cwd)
         os.system("rm -r "+cwd+"/temp/")
 
     def move(self, copy_location, paste_location):
-        os.system("cp "+copy_location+" "+paste_location)
+        os.system("cp "+copy_location+" "+paste_location+"/"+self.name)
 
     def move_lists(self, folder_path, git_path):
         cues = "blocklist cleantalk dronebl firehol_abusers ipblocklist stopforspam sblam proxylists proxy ri_connect ri_web " \
            "socks_proxy ssl_proxy xroxy bi_any bi_apache bi_as bi_cms bi_default bi_dns bi_dov bi_ftp bi_htt bi_mail bi_ " \
            "blocklist_de blueliv dataplane dshield_ firehol_ normshield_ urandomusto".split(" ")
         files_list = os.listdir(git_path)
-        
+        os.system("mkdir "+folder_path+"/"+self.name)
         for file_name in files_list:
             complete_path = git_path+"/"+file_name
             if os.path.isfile(complete_path):
@@ -66,33 +63,21 @@ class FireholCollector(FeedCollector):
                         break
 
 class GreenSnowCollector(FeedCollector):
-    def download_raw_files(self, path):
-        for i in range(6,9):
-            os.system("wget "+self.url.replace("<level>", str(i))+" -P "+path)
-        self.url = url
-    def download_raw_files(self, path):import os
-
-class Collector(FeedCollector):    
-    def download_raw_files(self, path):
-        os.system("wget "+self.url+" -P "+path)
-        os.system("wget "+self.url+" -P "+path)
+    pass
 
 class MalshareCollector(FeedCollector): 
-    def download_raw_files(self, path):
-        os.system("wget "+self.url+" -P "+path)
+    pass
 
 class MISPCollector(FeedCollector):  
     def download_raw_files(self, path):
         for i in range(6,9):
-            os.system("wget "+self.url.replace("<level>", str(i))+" -P "+path)
+            os.system("wget "+self.url.replace("<level>", str(i))+" -P "+path+"/"+self.name)
 
 class OpenphishCollector(FeedCollector):
-    def download_raw_files(self, path):
-        os.system("wget "+self.url+" -P "+path)
+    pass
 
 class SSLCollector(FeedCollector):
-    def download_raw_files(self, path):
-        os.system("wget "+self.url+" -P "+path)
+    pass
 
 class SuricataCollector(FeedCollector):
     def get_links(self, url, iptype):
@@ -111,11 +96,10 @@ class SuricataCollector(FeedCollector):
         for iptype in IPTypes:
             self.URI.append(self.get_links(self.url, iptype)[0])
         for uri in self.URI:
-            os.system("wget "+uri+" -P " +path)
+            os.system("wget "+uri+" -P " +path+"/"+self.name)
 
 class ThreatFoxCollector(FeedCollector):
-    def download_raw_files(self, path):
-        os.system("wget "+self.url+" -P "+path)
+    pass
 
 
 
