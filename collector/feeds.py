@@ -4,11 +4,16 @@ import requests
 from bs4 import BeautifulSoup
 
 class FeedCollector(object):    
-    def __init__(self, url, feed_name):
+    def __init__(self, url, feed_name, category=None):
         self.url = url
         self.name = feed_name
+        self.category = category
     def download_raw_files(self, path):
         os.system("wget "+self.url+" -P "+path+"/"+self.name)
+    def mold_files(self, path):
+        self.file_lists = os.listdir(path+"/"+self.name)
+        print(self.file_lists)
+        pass
 
 class DantorCollector(FeedCollector):    
     pass

@@ -51,13 +51,15 @@ class Collector():
             except Exception as e:
                 self.logger.error(e)
                 self.logger.error(traceback.print_exc())
-
+            
+            collector.mold_files(self.raw_folder)
     def start(self):
         self.scheduler.add_job(self.download_raw_files, 'interval', minutes=1)
         self.scheduler.start()     
 
 def main():
     collector = Collector()
+    #collector.mold_files(collector.name)
     collector.download_raw_files()
     '''
     collector.start()
