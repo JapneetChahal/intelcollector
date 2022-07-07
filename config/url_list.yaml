@@ -1,0 +1,16 @@
+firehol: "https://github.com/firehol/blocklist-ipsets.git"
+suricata: "https://rules.emergingthreats.net/blockrules/"
+domains: "https://zonefiles.io/f/compromised/domains/full/"
+fingerprint: "https://sslbl.abuse.ch/blacklist/ja3_fingerprints.csv"
+feodo_tracker: 
+    - "https://feodotracker.abuse.ch/downloads/ipblocklist_recommended.txt"
+    - "https://feodotracker.abuse.ch/downloads/ipblocklist.csv"
+threatfox: "https://threatfox.abuse.ch/downloads/hostfile/"
+misp_level: "https://raw.githubusercontent.com/stamparm/ipsum/master/levels/<level>.txt"
+dan_tor:
+    -  "https://www.dan.me.uk/torlist/?exit"
+    -  "https://www.dan.me.uk/torlist/"
+greensnow: "https://blocklist.greensnow.co/greensnow.txt"
+malshare: "https://malshare.com/daily/malshare.current.all.txt"
+openphish: "https://openphish.com/feed.txt"
+

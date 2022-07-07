@@ -1,0 +1,13 @@
+[Unit]
+Description=Threat Intel Feed Collector
+#BindsTo=elasticsearch.service #for restart and stoping for starting use 'Wants=vnfsalert.service' in elasticsearch.service
+
+[Service]
+WorkingDirectory=/
+ExecStart=/usr/local/bin/intelcollector
+Restart=always
+RestartSec=10
+SyslogIdentifier=intelcollector
+
+[Install]
+WantedBy=multi-user.target
