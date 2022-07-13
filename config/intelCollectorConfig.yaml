@@ -1,6 +1,7 @@
 raw_files_location: /usr/local/etc/raw_files
 log_file_location: /var/log/intelcollector/intelcollector.log
+merged_files_location: /usr/local/etc/merged_files
 validated_files_location: /usr/local/etc
 update_every:
   minutes: 1
-intel_list: /usr/local/etc/intel_list.yaml
+intel_list: /usr/local/etc/url_list.yaml

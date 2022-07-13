@@ -3,7 +3,6 @@ import os
 import requests
 from bs4 import BeautifulSoup
 
-
 class FeedCollector(object):    
     def __init__(self, url, feed_name, category=None):
         self.url = url
@@ -22,75 +21,44 @@ class FeedCollector(object):
     def merge_values(self, file_path, target_file_path):  
         pass
 
-    def append_values(self, target_file_path, new_lines):        
-        new_f = open(target_file_path+".txt", "a")
-        new_f.writelines(new_lines)
-        new_f.close()
-
-    def extract_values(self, raw_folder_path, target_file_path, ioc_type):
+    def extract_values(self, raw_folder_path, target_file_path):
         self.files_list = os.listdir(raw_folder_path)
         for file_name in self.files_list:
-            self.merge_values(raw_folder_path+"/"+file_name, target_file_path, ioc_type)
-
+            self.merge_values(raw_folder_path+"/"+file_name, raw_folder_path)
+        print("raw_folder____:"+raw_folder_path+"   :  "+target_file_path)
+        #pass
 
 class DantorCollector(FeedCollector):    
     def __init__(self, url, feed_name):
         super(DantorCollector, self).__init__(url, feed_name)
         self.set_ioc_types(["tor"])
-
-    def download_raw_files(self, path):
-        for url in self.url:
-            os.system("wget "+url+" -P "+path+"/"+self.name)
-        self.raw_folder = path +"/"+self.name
-
     def merge_values(self, file_path, target_file_path):
-        f = open(file_path, "r")
-        lines = f.readlines()
-        f.close()
-        self.append_values(target_file_path, lines)
-
+        pass
 
 class DomainCollector(FeedCollector):
     def __init__(self, url, feed_name):
         super(DomainCollector, self).__init__(url, feed_name)
         self.set_ioc_types(["domain"])
 
-    def merge_values(self, file_path, target_file_path, ioc_type):
+    def merge_values(self, file_path, target_file_path):
         f = open(file_path, "r")
         lines = f.readlines()
         f.close()
-        self.append_values(target_file_path, lines[1:])
-
-
+        print(file_path)
+        print(target_file_path)
+        new_f = open(target_file_path, "a")
+        new_f.writelines(lines[1:])
+        new_f.close()
 class FeodoCollector(FeedCollector): 
     def __init__(self, url, feed_name):
         super(FeodoCollector, self).__init__(url, feed_name)
         self.set_ioc_types(["bot"])
-
-    def download_raw_files(self, path):
-        for url in self.url:
-            os.system("wget "+url+" -P "+path+"/"+self.name)
-        self.raw_folder = path +"/"+self.name
-
-    def merge_values(self, file_path, target_file_path, ioc_type):
-        f = open(file_path, "r")
-        lines = f.readlines()
-        f.close()
-        new_lines = []
-        for line in lines:
-            if not "#" in line and not "," in line:
-                new_lines.append(line)
-            if "," in line:
-                new_lines.append(line.split(",")[1][1:-1]+"\n")
-        self.append_values(target_file_path, new_lines)
-
 
 class FireholCollector(FeedCollector):
     def __init__(self, url, feed_name):
         super(FireholCollector, self).__init__(url, feed_name)
 
         self.set_ioc_types(["bot", "tor", "blacklist"])
-
     def download_rep(self, url):
         os.system("git clone "+url+" temp/")
  
@@ -131,107 +99,34 @@ class FireholCollector(FeedCollector):
                     elif "tor" in file_name:
                         self.move(complete_path, folder_path)
                         break
-    def get_ips(self, subnet):
-        def getNext(ip_arr):
-            i = 3
-            while i > 0:
-                if ip_arr[i] == 255:
-                    ip_arr[i] = 0
-                    i -= 1
-                else:
-                    ip_arr[i] += 1
-                    break      
-            return ip_arr 
-        subnet_arr = subnet.split("/")
-        root_ip, size = subnet_arr[0].split('.'), 2**(32 - int(subnet_arr[1]))
-        root = [int(root_ip[i]) for i in range(len(root_ip))]
-        ips = []
-        for i in range(size):
-            ips.append(root.copy())
-            root = getNext(root)
-        res = []
-        for ip in ips:
-            temp = ".".join([str(ip[j]) for j in range(len(ip))])
-            res.append(temp+"\n")
-        return res
-                
-    def merge_values(self, file_path, target_file_path, ioc_type):
-        if ioc_type in file_path:
-            f = open(file_path, "r")
-            lines = f.readlines()
-            new_lines = []
-            for line in lines:
-                if not "#" in line:
-                    if '/' not in line:
-                        new_lines.append(line)
-                    else:
-                        for ip in self.get_ips(line):
-                            new_lines.append(ip)
-            self.append_values(target_file_path, new_lines)
-
-            
 
 class GreenSnowCollector(FeedCollector):
     def __init__(self, url, feed_name):
         super(GreenSnowCollector, self).__init__(url, feed_name)
         self.set_ioc_types(["blacklist"])
-    
-    def merge_values(self, file_path, target_file_path, ioc_type):
-        f = open(file_path, "r")
-        lines = f.readlines()
-        f.close()
-        self.append_values(target_file_path, lines[1:])
-
 
 class MalshareCollector(FeedCollector): 
     def __init__(self, url, feed_name):
         super(MalshareCollector, self).__init__(url, feed_name)
         self.set_ioc_types(["hashes"])
 
-
 class MISPCollector(FeedCollector):  
     def __init__(self, url, feed_name):
         super(MISPCollector, self).__init__(url, feed_name)
         self.set_ioc_types(["blacklist"])
-
     def download_raw_files(self, path):
         for i in range(6,9):
             os.system("wget "+self.url.replace("<level>", str(i))+" -P "+path+"/"+self.name)
 
-    def merge_values(self, file_path, target_file_path, ioc_type):
-        f = open(file_path, "r")
-        lines = f.readlines()
-        f.close()
-        self.append_values(target_file_path, lines)
-
-
 class OpenphishCollector(FeedCollector):
     def __init__(self, url, feed_name):
         super(OpenphishCollector, self).__init__(url, feed_name)
-        self.set_ioc_types(["http_uri"])
-
-    def merge_values(self, file_path, target_file_path, ioc_type):
-        f = open(file_path, "r")
-        lines = f.readlines()
-        f.close()
-        self.append_values(target_file_path, lines)
-
+        self.set_ioc_types(["uri"])
 
 class SSLCollector(FeedCollector):
     def __init__(self, url, feed_name):
         super(SSLCollector, self).__init__(url, feed_name)
         self.set_ioc_types(["ssl_fingerprint"])
-
-    def merge_values(self, file_path, target_file_path, ioc_type):
-        f = open(file_path, "r")
-        lines = f.readlines()
-        f.close()
-        new_lines = []
-        for line in lines:
-            if not "#" in line:
-                new_lines.append(line.split(",")[0]+"\n")
-        self.append_values(target_file_path, new_lines)
-
 
 class SuricataCollector(FeedCollector):
     def __init__(self, url, feed_name):
@@ -256,43 +151,10 @@ class SuricataCollector(FeedCollector):
         for uri in self.URI:
             os.system("wget "+uri+" -P " +path+"/"+self.name)
 
-    def clean_line(self, line):
-        temp = ""
-        start = False
-        for i in line:
-            if start and i != ']':
-                temp += i
-            if i == "]":
-                break
-            if i == "[":
-                start = True 
-        return temp.split(",")    
-
-    def merge_values(self, file_path, target_file_path, ioc_type):
-        f = open(file_path, "r")
-        lines = f.readlines()
-        f.close()
-        new_lines = []
-        for line in lines:
-            if 'alert' in line:
-                for ip in self.clean_line(line):
-                    new_lines.append(ip.replace("\n", "")+"\n")
-        self.append_values(target_file_path, new_lines)
-
-
 class ThreatFoxCollector(FeedCollector):
     def __init__(self, url, feed_name):
         super(ThreatFoxCollector, self).__init__(url, feed_name)
         self.set_ioc_types(["domain"])
 
-    def merge_values(self, file_path, target_file_path, ioc_type):
-        f = open(file_path, "r")
-        lines = f.readlines()
-        f.close()
-        new_lines = []
-        for line in lines:
-            if not "#" in line:
-                new_line = line.replace(" ", "").replace("\t", "")[9:]
-                new_lines.append(new_line)
-        self.append_values(target_file_path, new_lines)
+
 

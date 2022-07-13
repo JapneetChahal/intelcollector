@@ -10,12 +10,4 @@ def ensure_current_date_folder(self):
         os.mkdir(test_folder)
     return test_folder
 
-def deduplicate_files(self, folder_path):
-    files_list = os.listdir(folder_path)
-    for file_name in files_list:
-        file_path = folder_path+"/"+file_name
-        file_ = open(file_path, "r")
-        file_lines = file_.readlines()
-        final_lines = 
-    print(files_list)
 
