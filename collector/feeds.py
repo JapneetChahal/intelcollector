@@ -22,11 +22,22 @@ class FeedCollector(object):
     def merge_values(self, file_path, target_file_path):  
         pass
 
-    def append_values(self, target_file_path, new_lines):        
-        new_f = open(target_file_path+".txt", "a")
+    def append_values(self, target_file_path, new_lines):
+        new_lines = list(set(new_lines))
+        l = len(new_lines)
+        c = 0
+        if not os.path.exists(target_file_path+".txt"):        
+            pass
+        else:
+            old_f = open(target_file_path+".txt", "r")
+            old_values = old_f.readlines()
+            old_f.close()
+            l = len(old_values)
+            new_lines = list(set(new_lines+old_values))
+        new_f = open(target_file_path+".txt", "w")
         new_f.writelines(new_lines)
         new_f.close()
-
+            
     def extract_values(self, raw_folder_path, target_file_path, ioc_type):
         self.files_list = os.listdir(raw_folder_path)
         for file_name in self.files_list:

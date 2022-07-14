@@ -9,7 +9,7 @@ import logging
 import traceback
 
 from . import feeds
-from .utils import ensure_current_date_folder, deduplicate_files
+from .utils import ensure_current_date_folder, deduplicate_files, validate_folder
 
 class Collector():
     def parse_args(self):
@@ -44,9 +44,10 @@ class Collector():
         self.logger.setLevel(logging.DEBUG)
 
     def update_feed(self):
-        #self.download_raw_files()
-        #self.merge_files()
-        deduplicate_files(self, self.merged_files_location)
+        self.download_raw_files()
+        self.merge_files()
+        deduplicate_files(self, self.merged_files_location, ["tor.txt", "bot.txt", "blacklist.txt"])
+        validate_folder(self, self.merged_files_location)
         #self.
         
     def download_raw_files(self):
@@ -54,9 +55,9 @@ class Collector():
         for collector in self.collectors:
             try:
                 collector.download_raw_files(self.raw_folder)
-                self.logger.info("Downloaded "+str(collector.url))
+                self.logger.info("Downloaded Intel from feed: '%s'" % collector.name)
             except Exception as e:
-                self.logger.error(e)
+                self.logger.error("Error Occured while downloading from %s: %s" % (collector.name, e))
                 self.logger.error(traceback.print_exc())
     
     def merge_files(self):
